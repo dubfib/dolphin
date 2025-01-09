@@ -1,15 +1,3 @@
 # dolphin
-
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.1.29. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+> Discord Bot created for [The Damned](https://discord.com/invite/sEf3r9e) Hypixel Guild.
+##### © Copyright 2025 dubfib - [MIT License](https://github.com/dubfib/dolphin/blob/main/LICENSE)
