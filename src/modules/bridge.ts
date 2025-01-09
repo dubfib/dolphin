@@ -97,9 +97,26 @@ export async function bridge({ client }: { client: Client }) {
 
         /* channel checks */
         if (message.channelId === config.guild_channel) {
-            bot.chat(`/gc @${message.author.username} > *${message.cleanContent} (edited)`);
+            bot.chat(`/gc @${message.author.username} > ${message.cleanContent} (edited)`);
         } else if (message.channelId === config.officer_channel) {
-            bot.chat(`/oc @${message.author.username} > *${message.cleanContent} (edited)`);
+            bot.chat(`/oc @${message.author.username} > ${message.cleanContent} (edited)`);
+        } else return;
+    });
+
+
+    /* discord event for adding reactions */
+    client.on(Events.MessageReactionAdd, async (reaction, user) => {
+        /* check if a bot and in right channel */
+        if (user.bot) return;
+
+        /* make sure the reacted message has an author */
+        if (!reaction.message.author) return;
+
+        /* channel checks */
+        if (reaction.message.channelId === config.guild_channel) {
+            bot.chat(`/gc @${reaction.message.author.username} reacted ${reaction.emoji.name} to ${reaction.message.cleanContent}`);
+        } else if (reaction.message.channelId === config.officer_channel) {
+            bot.chat(`/oc @${reaction.message.author.username} reacted ${reaction.emoji.name} to ${reaction.message.cleanContent}`);
         } else return;
     });
 }
