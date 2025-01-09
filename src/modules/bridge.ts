@@ -76,6 +76,8 @@ export async function bridge({ client }: { client: Client }) {
 
     /* discord bot side */
     /* needs filter (to-do) */
+
+    /* discord event for sent message */
     client.on(Events.MessageCreate, async (message) => {
         /* check if a bot and in right channel */
         if (message.author.bot) return;
@@ -85,6 +87,19 @@ export async function bridge({ client }: { client: Client }) {
             bot.chat(`/gc @${message.author.username} > ${message.cleanContent}`);
         } else if (message.channelId === config.officer_channel) {
             bot.chat(`/oc @${message.author.username} > ${message.cleanContent}`);
+        } else return;
+    });
+
+    /* discord event for message edit */
+    client.on(Events.MessageUpdate, async (_, message) => {
+        /* check if a bot and in right channel */
+        if (message.author.bot) return;
+
+        /* channel checks */
+        if (message.channelId === config.guild_channel) {
+            bot.chat(`/gc @${message.author.username} > *${message.cleanContent} (edited)`);
+        } else if (message.channelId === config.officer_channel) {
+            bot.chat(`/oc @${message.author.username} > *${message.cleanContent} (edited)`);
         } else return;
     });
 }
