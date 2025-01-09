@@ -28,7 +28,7 @@ export async function bridge({ client }: { client: Client }) {
 
     bot.on('chat', async (username, message): Promise<void> => {
         /* regular expressions */
-        const MessageRegex = new RegExp(config.regex.guild_message);
+        const MessageRegex = /(?:\[[\w+\-]+] )?(\w+)(?: \[[\w+\-]+])?: (.+)$/;
 
         /* parse channels */
         switch (username) {
