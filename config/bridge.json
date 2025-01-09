@@ -3,10 +3,5 @@
     "email": "example@example.com",
     "version": "1.8.9",
     "guild_channel": "snowflake_discord_channel_id",
-    "officer_channel": "snowflake_discord_channel_id",
-    "regex": {
-        "guild_message": "/(?:\\[[\\w+\\-]+] )?(\\w+)(?: \\[[\\w+\\-]+])?: (.+)$/",
-        "guild_join": "^(\\w+) joined\\.$",
-        "guild_left": "^(\\w+) left\\.$"
-    }
+    "officer_channel": "snowflake_discord_channel_id"
 }
