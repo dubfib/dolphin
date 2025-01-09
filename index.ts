@@ -11,6 +11,10 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent
 ]});
 
+client.once(Events.ClientReady, (client) => {
+    console.log(`[discord.js] authenticated as ${client.user.tag}`)
+});
+
 client.on(Events.MessageCreate, async (message) => {
     await bridge({ client: client, message: message });
 });
