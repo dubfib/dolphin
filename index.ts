@@ -21,9 +21,7 @@ const client = new Client({
 
 client.once(Events.ClientReady, async (client) => {
     console.log(`[discord.js] authenticated as ${client.user.tag}`);
-    await client.channels.fetch('845991029919842344');
-
-    await bridge({ client: client }); //init bridge
+    await bridge({ client: client });
 });
 
 client.login(token).catch(err => console.log(err));
