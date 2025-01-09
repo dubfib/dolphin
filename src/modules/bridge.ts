@@ -6,17 +6,19 @@
  * @author dubfib
  * @license MIT
 */
-import { Client, Message, EmbedBuilder, Colors, TextChannel} from "discord.js";
+import { Client, EmbedBuilder, Colors, TextChannel, Events } from "discord.js";
 import { createBot } from "mineflayer";
+
 import * as config from "../../config/bridge.json" assert { type: "json" };
 
-export async function bridge({ client, message }: { client: Client, message: Message }) {
+export async function bridge({ client }: { client: Client }) {
     /* minecraft bot side */
     const bot = createBot({
         host: config.host,
         username: config.email,
         auth: "microsoft",
-        version: config.version
+        version: config.version,
+        profilesFolder: "../../.minecraft"
     });
 
     bot.once('spawn', async () => {
@@ -70,17 +72,19 @@ export async function bridge({ client, message }: { client: Client, message: Mes
     });
 
     /* persistence */
-    bot.on('end', async () => await bridge({ client: client, message: message }));
+    bot.on('end', async () => await bridge({ client: client }));
 
     /* discord bot side */
     /* needs filter (to-do) */
+    client.on(Events.MessageCreate, async (message) => {
+        /* check if a bot and in right channel */
+        if (message.author.bot) return;
 
-    /* check if a bot and in right channel */
-    if (message.author.bot) return;
-
-    if (message.channelId === config.guild_channel) {
-        bot.chat(`/gc @${message.author.username} > ${message.cleanContent}`);
-    } else if (message.channelId === config.officer_channel) {
-        bot.chat(`/oc @${message.author.username} > ${message.cleanContent}`);
-    } else return;
+        /* channel checks */
+        if (message.channelId === config.guild_channel) {
+            bot.chat(`/gc @${message.author.username} > ${message.cleanContent}`);
+        } else if (message.channelId === config.officer_channel) {
+            bot.chat(`/oc @${message.author.username} > ${message.cleanContent}`);
+        } else return;
+    });
 }
