@@ -64,7 +64,7 @@ export async function bridge({ client }: { client: Client }) {
                     .setColor(Colors.DarkBlue)
                     .setFooter({ text: 'Officer Chat' })
                     .setTimestamp();
-                await (client.channels.cache.get(config.guild_channel) as TextChannel).send({ embeds: [ OfficerChatEmbed ]});
+                await (client.channels.cache.get(config.officer_channel) as TextChannel).send({ embeds: [ OfficerChatEmbed ]});
                 break;
             default:
                 break;
