@@ -10,6 +10,14 @@ import { Client, EmbedBuilder, Colors, TextChannel, Events } from "discord.js";
 import { createBot } from "mineflayer";
 
 import * as config from "../../config/bridge.json" assert { type: "json" };
+import * as emojis from "../../config/emojis.json" assert { type: "json" };
+
+/* manual emoji mappings */
+interface MappedEmojis {
+    [key: string]: string;
+}
+
+const EmojiMappings = emojis as MappedEmojis;
 
 export async function bridge({ client }: { client: Client }) {
     /* minecraft bot side */
@@ -82,11 +90,17 @@ export async function bridge({ client }: { client: Client }) {
         /* check if a bot and in right channel */
         if (message.author.bot) return;
 
+        let content = message.cleanContent;
+
+        for (const [key, value] of Object.entries(EmojiMappings)) {
+            content = content.replaceAll(key, value);
+        }
+
         /* channel checks */
         if (message.channelId === config.guild_channel) {
-            bot.chat(`/gc @${message.author.username} > ${message.cleanContent}`);
+            bot.chat(`/gc @${message.author.username} > ${content}`);
         } else if (message.channelId === config.officer_channel) {
-            bot.chat(`/oc @${message.author.username} > ${message.cleanContent}`);
+            bot.chat(`/oc @${message.author.username} > ${content}`);
         } else return;
     });
 
@@ -106,17 +120,31 @@ export async function bridge({ client }: { client: Client }) {
 
     /* discord event for adding reactions */
     client.on(Events.MessageReactionAdd, async (reaction, user) => {
+        /* emoji mappings from config file. i want another solution to this (i hate this) */
+
         /* check if a bot and in right channel */
         if (user.bot) return;
 
-        /* make sure the reacted message has an author */
+        /* fixes a bug that says you reacted to null */
         if (!reaction.message.author) return;
 
-        /* channel checks */
-        if (reaction.message.channelId === config.guild_channel) {
-            bot.chat(`/gc @${reaction.message.author.username} reacted ${reaction.emoji.name} to ${reaction.message.cleanContent}`);
-        } else if (reaction.message.channelId === config.officer_channel) {
-            bot.chat(`/oc @${reaction.message.author.username} reacted ${reaction.emoji.name} to ${reaction.message.cleanContent}`);
-        } else return;
+        const name = reaction.emoji.name?.toString();
+
+        /* parse emoji name from emoji mappings */
+        if (name && name in EmojiMappings) {
+            const text = EmojiMappings[name];
+
+            if (reaction.message.channelId === config.guild_channel) {
+                bot.chat(`/gc @${user.username} reacted ${text} to ${reaction.message.cleanContent}`);
+            } else if (reaction.message.channelId === config.officer_channel) {
+                bot.chat(`/oc @${user.username} reacted ${text} to ${reaction.message.cleanContent}`);
+            }
+        } else {
+            if (reaction.message.channelId === config.guild_channel) {
+                bot.chat(`/gc @${user.username} reacted :${name}: to ${reaction.message.cleanContent}`);
+            } else if (reaction.message.channelId === config.officer_channel) {
+                bot.chat(`/oc @${user.username} reacted :${name}: to ${reaction.message.cleanContent}`);
+            }
+        }
     });
 }

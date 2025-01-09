@@ -4,13 +4,14 @@ import { bridge } from "./src/modules/bridge.ts";
 
 import { token } from './config/discord.json';
 
-const client = new Client({ 
+const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent
-    ], 
+    ],
     partials: [
         Partials.Message,
         Partials.Reaction,
@@ -21,7 +22,7 @@ const client = new Client({
 client.once(Events.ClientReady, async (client) => {
     console.log(`[discord.js] authenticated as ${client.user.tag}`);
     await client.channels.fetch('845991029919842344');
-    
+
     await bridge({ client: client }); //init bridge
 });
 
